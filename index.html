@@ -1,10 +1,350 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<title>Hello World</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>在HTML中使用Python</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            color: #1a2a6c;
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+        }
+        
+        .subtitle {
+            color: #666;
+            font-size: 1.2rem;
+        }
+        
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        h2 {
+            color: #1a2a6c;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #fdbb2d;
+        }
+        
+        .code-container {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .code-container pre {
+            white-space: pre-wrap;
+        }
+        
+        .editor-container {
+            display: flex;
+            flex-direction: column;
+            height: 400px;
+        }
+        
+        #code-input {
+            flex: 1;
+            background: #2d2d2d;
+            color: #f8f8f2;
+            border: none;
+            border-radius: 5px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            resize: none;
+            margin-bottom: 10px;
+        }
+        
+        button {
+            background: #1a2a6c;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        
+        button:hover {
+            background: #0d1a4d;
+        }
+        
+        #output {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            border-radius: 5px;
+            padding: 15px;
+            min-height: 100px;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+        }
+        
+        .loading {
+            color: #fdbb2d;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .method {
+            margin-bottom: 25px;
+        }
+        
+        .method h3 {
+            color: #b21f1f;
+            margin-bottom: 10px;
+        }
+        
+        .note {
+            background: #fff9e6;
+            border-left: 4px solid #fdbb2d;
+            padding: 10px 15px;
+            margin: 15px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: white;
+            margin-top: 30px;
+        }
+    </style>
 </head>
 <body>
-<h1>Hello, World!</h1>
+    <div class="container">
+        <header>
+            <h1>在HTML中使用Python</h1>
+            <p class="subtitle">探索在网页中运行Python代码的各种方法</p>
+        </header>
+        
+        <div class="content">
+            <div class="card">
+                <h2>浏览器中运行Python</h2>
+                <p>使用Pyodide（基于WebAssembly的Python）可以直接在浏览器中执行Python代码：</p>
+                
+                <div class="editor-container">
+                    <textarea id="code-input" placeholder="在这里输入Python代码..."># 简单的Python示例
+def greet(name):
+    return f"你好, {name}!"
+
+print(greet("世界"))
+
+# 计算斐波那契数列
+def fibonacci(n):
+    if n <= 1:
+        return n
+    else:
+        return fibonacci(n-1) + fibonacci(n-2)
+
+print("\n斐波那契数列前10项:")
+for i in range(10):
+    print(f"F({i}) = {fibonacci(i)}")</textarea>
+                    <div>
+                        <button id="run-btn">运行代码</button>
+                        <button id="clear-btn">清除输出</button>
+                    </div>
+                </div>
+                
+                <h3>输出结果:</h3>
+                <div id="output">点击"运行代码"查看结果...</div>
+                <div id="pyodide-loading" class="loading">正在加载Pyodide运行时...</div>
+            </div>
+            
+            <div class="card">
+                <h2>实现方法</h2>
+                
+                <div class="method">
+                    <h3>1. Pyodide (浏览器内Python)</h3>
+                    <p>Pyodide将Python编译为WebAssembly，使其能在浏览器中运行。</p>
+                    <div class="code-container">
+                        <pre>&lt;script src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+  async function main() {
+    let pyodide = await loadPyodide();
+    return pyodide.runPython(`
+      import sys
+      sys.version
+    `);
+  }
+  main().then(version => {
+    console.log(version);
+  });
+&lt;/script&gt;</pre>
+                    </div>
+                </div>
+                
+                <div class="method">
+                    <h3>2. 服务器端Python</h3>
+                    <p>使用Flask、Django等框架在服务器运行Python，通过API与前端交互。</p>
+                    <div class="code-container">
+                        <pre>from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+
+@app.route('/run-python', methods=['POST'])
+def run_python():
+    code = request.json.get('code')
+    try:
+        # 注意：在生产环境中执行用户代码需要严格的安全措施
+        result = exec(code)
+        return jsonify({'result': str(result)})
+    except Exception as e:
+        return jsonify({'error': str(e)})
+
+if __name__ == '__main__':
+    app.run(debug=True)</pre>
+                    </div>
+                </div>
+                
+                <div class="method">
+                    <h3>3. 转换为JavaScript</h3>
+                    <p>使用Transcrypt等工具将Python代码转换为JavaScript。</p>
+                    <div class="code-container">
+                        <pre># Python代码
+def calculate(a, b):
+    return a * b + 10
+
+# 转换为JavaScript后
+function calculate(a, b) {
+    return a * b + 10;
+}</pre>
+                    </div>
+                </div>
+                
+                <div class="note">
+                    <strong>注意：</strong>在浏览器中直接运行Python代码有一定的性能限制，且无法使用所有Python库。对于复杂应用，建议使用服务器端方案。
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>更多信息</h2>
+            <p>要在生产环境中使用Python与HTML/CSS/JavaScript结合，可以考虑以下方案：</p>
+            <ul style="padding-left: 20px; margin: 15px 0;">
+                <li><strong>Web框架：</strong>使用Django、Flask或FastAPI创建Web应用</li>
+                <li><strong>Jupyter Notebook：</strong>在网页中交互式运行Python代码</li>
+                <li><strong>Brython：</strong>另一种在浏览器中运行Python的替代方案</li>
+                <li><strong>PyScript：</strong>一个新框架，允许在HTML中嵌入Python</li>
+            </ul>
+        </div>
+        
+        <footer>
+            <p>© 2023 HTML与Python集成示例 | 演示目的</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"></script>
+    <script>
+        // 初始化Pyodide
+        let pyodide;
+        async function initializePyodide() {
+            try {
+                pyodide = await loadPyodide();
+                document.getElementById('pyodide-loading').style.display = 'none';
+                document.getElementById('output').textContent = 'Pyodide加载完成！现在可以运行Python代码了。';
+            } catch (error) {
+                document.getElementById('pyodide-loading').textContent = '加载Pyodide失败: ' + error.message;
+            }
+        }
+        
+        // 运行Python代码
+        async function runPythonCode() {
+            if (!pyodide) {
+                document.getElementById('output').textContent = 'Pyodide尚未加载完成，请稍候...';
+                return;
+            }
+            
+            const code = document.getElementById('code-input').value;
+            const outputElement = document.getElementById('output');
+            
+            try {
+                // 捕获print输出
+                let output = '';
+                pyodide.runPython(`
+import sys
+from io import StringIO
+sys.stdout = StringIO()
+`);
+                
+                // 执行用户代码
+                pyodide.runPython(code);
+                
+                // 获取输出
+                output = pyodide.runPython("sys.stdout.getvalue()");
+                
+                if (output === '') {
+                    output = '代码执行成功，但没有输出。';
+                }
+                
+                outputElement.textContent = output;
+            } catch (error) {
+                outputElement.textContent = '错误: ' + error.message;
+            }
+        }
+        
+        // 清除输出
+        function clearOutput() {
+            document.getElementById('output').textContent = '输出已清除';
+        }
+        
+        // 事件监听
+        document.getElementById('run-btn').addEventListener('click', runPythonCode);
+        document.getElementById('clear-btn').addEventListener('click', clearOutput);
+        
+        // 初始化
+        initializePyodide();
+    </script>
 </body>
 </html>
